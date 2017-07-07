@@ -75,6 +75,12 @@ namespace zmq
         //  Returns false if object is not a context.
         bool check_tag ();
 
+		// set error handler callback
+		void set_error_handler(zmq_error_fn ffn);
+
+		// redirects error to error handler callback if it is set
+		void handle_error(int errno_, const char* host);		
+
         //  This function is called when user invokes zmq_ctx_term. If there are
         //  no more sockets open it'll cause all the infrastructure to be shut
         //  down. If there are open sockets still, the deallocation happens
@@ -144,6 +150,9 @@ namespace zmq
 
         //  Used to check whether the object is a context.
         uint32_t tag;
+
+		// Error handler callback
+		zmq_error_fn error_fn;
 
         //  Sockets belonging to this context. We need the list so that
         //  we can notify the sockets when zmq_ctx_term() is called.

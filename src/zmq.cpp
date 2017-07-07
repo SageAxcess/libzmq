@@ -116,6 +116,18 @@ int zmq_errno (void)
 }
 
 
+int zmq_error_handler(void* ctx_, zmq_error_fn ffn)
+{
+	if (!ctx_ || !((zmq::ctx_t *) ctx_)->check_tag()) {
+		errno = EFAULT;
+		return -1;
+	}
+
+	((zmq::ctx_t *) ctx_)->set_error_handler(ffn);
+
+	return 0;
+}
+
 //  New context API
 
 void *zmq_ctx_new (void)

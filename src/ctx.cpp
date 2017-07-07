@@ -70,6 +70,7 @@ int clipped_maxsocket (int max_requested)
 
 zmq::ctx_t::ctx_t () :
     tag (ZMQ_CTX_TAG_VALUE_GOOD),
+	error_fn(0),
     starting (true),
     terminating (false),
     reaper (NULL),
@@ -105,6 +106,19 @@ zmq::ctx_t::ctx_t () :
 bool zmq::ctx_t::check_tag ()
 {
     return tag == ZMQ_CTX_TAG_VALUE_GOOD;
+}
+
+void zmq::ctx_t::set_error_handler(zmq_error_fn ffn)
+{
+	error_fn = ffn;
+}
+
+void zmq::ctx_t::handle_error(int errno_, const char* host)
+{
+	if(error_fn)
+	{
+		error_fn(errno_, host, NULL);
+	}
 }
 
 zmq::ctx_t::~ctx_t ()
