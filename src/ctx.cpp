@@ -111,6 +111,11 @@ bool zmq::ctx_t::check_tag ()
 
 void zmq::ctx_t::set_error_handler(zmq_error_fn ffn, void* data)
 {
+	if(error_data)
+	{
+		free(error_data);
+	}
+
 	error_fn = ffn;
 	error_data = data;
 }
