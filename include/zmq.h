@@ -214,7 +214,7 @@ ZMQ_EXPORT void zmq_version (int *major, int *minor, int *patch);
 
 /*  Error handler callback                                                    */
 typedef void(*zmq_error_fn) (int err, const char* host, void* data);
-ZMQ_EXPORT int zmq_error_handler(void* context, zmq_error_fn ffn);
+ZMQ_EXPORT int zmq_error_handler(void* context, zmq_error_fn ffn, void* data);
 
 /******************************************************************************/
 /*  0MQ infrastructure (a.k.a. context) initialisation & termination.         */

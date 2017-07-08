@@ -76,7 +76,7 @@ namespace zmq
         bool check_tag ();
 
 		// set error handler callback
-		void set_error_handler(zmq_error_fn ffn);
+		void set_error_handler(zmq_error_fn ffn, void* data);
 
 		// redirects error to error handler callback if it is set
 		void handle_error(int errno_, const char* host);		
@@ -153,6 +153,7 @@ namespace zmq
 
 		// Error handler callback
 		zmq_error_fn error_fn;
+		void* error_data;
 
         //  Sockets belonging to this context. We need the list so that
         //  we can notify the sockets when zmq_ctx_term() is called.
