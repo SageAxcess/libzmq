@@ -70,6 +70,8 @@ int clipped_maxsocket (int max_requested)
 
 zmq::ctx_t::ctx_t () :
     tag (ZMQ_CTX_TAG_VALUE_GOOD),
+	error_fn(0),
+	error_data(0),
     starting (true),
     terminating (false),
     reaper (NULL),
@@ -107,6 +109,25 @@ bool zmq::ctx_t::check_tag ()
     return tag == ZMQ_CTX_TAG_VALUE_GOOD;
 }
 
+void zmq::ctx_t::set_error_handler(zmq_error_fn ffn, void* data)
+{
+	if(error_data)
+	{
+		free(error_data);
+	}
+
+	error_fn = ffn;
+	error_data = data;
+}
+
+void zmq::ctx_t::handle_error(int errno_, const char* host)
+{
+	if(error_fn)
+	{
+		error_fn(errno_, host, error_data);
+	}
+}
+
 zmq::ctx_t::~ctx_t ()
 {
     //  Check that there are no remaining sockets.
@@ -136,6 +157,11 @@ zmq::ctx_t::~ctx_t ()
 #ifdef ZMQ_HAVE_CURVE
     randombytes_close ();
 #endif
+
+	if(error_data)
+	{
+		free(error_data);
+	}
 
     //  Remove the tag, so that the object is considered dead.
     tag = ZMQ_CTX_TAG_VALUE_BAD;

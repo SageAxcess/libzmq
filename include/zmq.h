@@ -190,6 +190,16 @@ extern "C" {
 #define ETERM (ZMQ_HAUSNUMERO + 53)
 #define EMTHREAD (ZMQ_HAUSNUMERO + 54)
 
+// Curve error codes
+#define ECURVEKEY (ZMQ_HAUSNUMERO + 55) // possibly wrong server key
+#define ECURVEHANDSHAKE (ZMQ_HAUSNUMERO + 56) // invalid handshake command
+#define ECURVECLIENT (ZMQ_HAUSNUMERO + 57) // invalid curve client
+#define ECURVENONCE (ZMQ_HAUSNUMERO + 58) // wrong nonce
+#define ECURVEHELLOVER (ZMQ_HAUSNUMERO + 59) // wrong hello version
+#define ECURVEHELLOSIZE (ZMQ_HAUSNUMERO + 60) // wrong hello size
+#define ECURVEHELLOCMD (ZMQ_HAUSNUMERO + 61) // wrong hello command
+
+
 /*  This function retrieves the errno as it is known to 0MQ library. The goal */
 /*  of this function is to make the code 100% portable, including where 0MQ   */
 /*  compiled with certain CRT library (on Windows) is linked to an            */
@@ -201,6 +211,10 @@ ZMQ_EXPORT const char *zmq_strerror (int errnum);
 
 /*  Run-time API version detection                                            */
 ZMQ_EXPORT void zmq_version (int *major, int *minor, int *patch);
+
+/*  Error handler callback                                                    */
+typedef void(*zmq_error_fn) (int err, const char* host, void* data);
+ZMQ_EXPORT int zmq_error_handler(void* context, zmq_error_fn ffn, void* data);
 
 /******************************************************************************/
 /*  0MQ infrastructure (a.k.a. context) initialisation & termination.         */

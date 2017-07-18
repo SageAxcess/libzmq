@@ -965,6 +965,8 @@ int zmq::stream_engine_t::push_one_then_decode_and_push (msg_t *msg_)
 
 void zmq::stream_engine_t::error (error_reason_t reason)
 {
+	socket->get_ctx()->handle_error(errno, peer_address.c_str());
+
     if (options.raw_socket && options.raw_notify) {
         //  For raw sockets, send a final 0-length message to the application
         //  so that it knows the peer has been disconnected.

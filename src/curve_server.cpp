@@ -103,7 +103,7 @@ int zmq::curve_server_t::process_handshake_command (msg_t *msg_)
         default:
             //  Temporary support for security debugging
             puts ("CURVE I: invalid handshake command");
-            errno = EPROTO;
+            errno = ECURVEHANDSHAKE;
             rc = -1;
             break;
     }
@@ -175,7 +175,7 @@ int zmq::curve_server_t::decode (msg_t *msg_)
     if (msg_->size () < 33) {
         //  Temporary support for security debugging
         puts ("CURVE I: invalid CURVE client, sent malformed command");
-        errno = EPROTO;
+        errno = ECURVECLIENT;
         return -1;
     }
 
@@ -183,7 +183,7 @@ int zmq::curve_server_t::decode (msg_t *msg_)
     if (memcmp (message, "\x07MESSAGE", 8)) {
         //  Temporary support for security debugging
         puts ("CURVE I: invalid CURVE client, did not send MESSAGE");
-        errno = EPROTO;
+        errno = ECURVECLIENT;
         return -1;
     }
 
@@ -192,7 +192,7 @@ int zmq::curve_server_t::decode (msg_t *msg_)
     memcpy (message_nonce + 16, message + 8, 8);
     uint64_t nonce = get_uint64(message + 8);
     if (nonce <= cn_peer_nonce) {
-        errno = EPROTO;
+        errno = ECURVENONCE;
         return -1;
     }
     cn_peer_nonce = nonce;
@@ -231,7 +231,7 @@ int zmq::curve_server_t::decode (msg_t *msg_)
     else {
         //  Temporary support for security debugging
         puts ("CURVE I: connection key used for MESSAGE is wrong");
-        errno = EPROTO;
+        errno = ECURVEKEY;
     }
     free (message_plaintext);
     free (message_box);
@@ -269,7 +269,7 @@ int zmq::curve_server_t::process_hello (msg_t *msg_)
     if (msg_->size () != 200) {
         //  Temporary support for security debugging
         puts ("CURVE I: client HELLO is not correct size");
-        errno = EPROTO;
+        errno = ECURVEHELLOSIZE;
         return -1;
     }
 
@@ -277,7 +277,7 @@ int zmq::curve_server_t::process_hello (msg_t *msg_)
     if (memcmp (hello, "\x05HELLO", 6)) {
         //  Temporary support for security debugging
         puts ("CURVE I: client HELLO has invalid command name");
-        errno = EPROTO;
+        errno = ECURVEHELLOCMD;
         return -1;
     }
 
@@ -287,7 +287,7 @@ int zmq::curve_server_t::process_hello (msg_t *msg_)
     if (major != 1 || minor != 0) {
         //  Temporary support for security debugging
         puts ("CURVE I: client HELLO has unknown version number");
-        errno = EPROTO;
+        errno = ECURVEHELLOVER;
         return -1;
     }
 
@@ -312,7 +312,7 @@ int zmq::curve_server_t::process_hello (msg_t *msg_)
     if (rc != 0) {
         //  Temporary support for security debugging
         puts ("CURVE I: cannot open client HELLO -- wrong server key?");
-        errno = EPROTO;
+        errno = ECURVEKEY;
         return -1;
     }
 
